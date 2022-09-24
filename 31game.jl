@@ -27,15 +27,39 @@ function grundy(grun_seq,subt)
 	return mex([grun_seq[N+1-i] for i in subt if i<N+1])
 end
 
+function z_function(strn)
+	N = length(strn)
+	z_result = zeros(Int,N)
+	left_pointer, right_pointer = 1, 1
+	for i in 2:N
+        	if i<=right_pointer
+                	min_edge = min(right_pointer - i, z_result[i - left_pointer])
+                	z_result[i] = min_edge
+        	end
+
+		while go_next(i, z_result, strn)
+			z_result[i] = z_result[i] + 1
+		end
+		if i + z_result[i] - 1 > right_pointer
+			left_pointer, right_pointer = i, i + z_result[i]
+		end
+	end
+	return z_result
+end
+
+go_next(i, z_result, s) = i - 1 + z_result[i] < length(s) && s[z_result[i] + 1] == s[i - 1 + z_result[i] + 1]
 
 function main()
 	cur =[];
-	subt = [1,2,3]
-	for i in 0:1000
+	subt = [1,4,10]
+	perio = []
+	for i in 0:10000
 		print(grundy(cur,subt))
 		print(" ")
 		cur = append!(cur,grundy(cur,subt))
+
 	end
+	print(cur)
 end
 
 main()
